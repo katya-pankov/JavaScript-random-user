@@ -1,23 +1,32 @@
 function fetchUser() {
-    showSpinner();
-    fetch('https://randomuser.me/api')
-        .then((response) => response.json())
-        .then((data) => {
-            hideSpinner();
-            displayUser(data.results[0]);
-        });
+  showSpinner();
+  fetch('https://randomuser.me/api')
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Request Failed');
+      }
+      return response.json()
+    })
+    .then((data) => {
+      hideSpinner();
+      displayUser(data.results[0]);
+    })
+    .catch((error) => {
+      hideSpinner();
+      document.querySelector('#user').innerHTML = `<p class="text-xl text-center text-red-500 mb-5">${error}</p>`;
+    })
 }
 
 function displayUser(user) {
-    const userDisplay = document.querySelector('#user')
-    if (user.gender === 'female') {
-        document.body.style.backgroundColor = '#FEEDE4';
-    }
-    else {
-        document.body.style.backgroundColor = '#E4EEFE';
-    }
+  const userDisplay = document.querySelector('#user')
+  if (user.gender === 'female') {
+    document.body.style.backgroundColor = '#FEEDE4';
+  }
+  else {
+    document.body.style.backgroundColor = '#E4EEFE';
+  }
 
-    userDisplay.innerHTML = `
+  userDisplay.innerHTML = `
     <div class="flex justify-between">
     <div class="flex">
       <img class="w-48 h-48 rounded-full mr-8" src="${user.picture.large}" />
@@ -42,11 +51,11 @@ function displayUser(user) {
 }
 
 function showSpinner() {
-    document.querySelector('.spinner').style.display = 'block';
+  document.querySelector('.spinner').style.display = 'block';
 }
 
 function hideSpinner() {
-    document.querySelector('.spinner').style.display = 'none';
+  document.querySelector('.spinner').style.display = 'none';
 }
 
 document.querySelector('#generate').addEventListener('click', fetchUser);
